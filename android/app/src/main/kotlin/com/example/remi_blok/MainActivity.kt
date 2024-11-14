@@ -1,4 +1,4 @@
-package com.example.remi_blok
+package hr.marincubela.remi_blok
 
 import io.flutter.embedding.android.FlutterActivity
 

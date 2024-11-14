@@ -186,7 +186,7 @@ class _RemiPageState extends State<RemiPage> {
                 initialValue: '',
                 // focusNode: _focus, // 5) pass our focusNode to our textfield
                 // keyboardType: TextInputType.none,
-                TextInputType.numberWithOptions(signed: true),
+                keyboardType: TextInputType.numberWithOptions(signed: true),
                 onFieldSubmitted: (newValue) {
                   setState(() {
                     repository.points[roundIndex][index] =
