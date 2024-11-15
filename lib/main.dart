@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:remi_blok/remi.dart';
+import 'package:remi_blok/remi_storage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
         useMaterial3: true,
       ),
-      home: const RemiPage(title: 'Remi blok - Dobro došli!'),
+      home: RemiPage(title: 'Remi blok - Dobro došli!', storage: RemiStorage()),
     );
   }
 }

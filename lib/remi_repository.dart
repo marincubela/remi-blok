@@ -1,3 +1,5 @@
+
+
 class RemiRepository {
   RemiRepository(List<String> players) {
     for (String player in players) {
@@ -68,4 +70,25 @@ class RemiRepository {
       players[index] = newName;
     }
   }
+
+  Map<String, dynamic> toJson() =>  { 
+    'players': players,
+    'points': points 
+  };
+
+  static List<List<int>> parsePoints(dynamic json) {
+    List<dynamic> firstList = json as List;
+
+    var secondList = firstList.map((e) {
+      var innerList = e as List;
+
+      return innerList.map((e) => e as int).toList();
+    }).toList();
+
+    return secondList;
+  }
+
+  RemiRepository.fromJson(Map<String, dynamic> json)
+    : players = List<String>.from(json['players'] as List),
+      points = parsePoints(json['points']);
 }
