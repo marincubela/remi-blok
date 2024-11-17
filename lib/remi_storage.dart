@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
-import 'package:remi_blok/remi_repository.dart';
+import 'package:kartaski_blok/remi_repository.dart';
 
 class RemiStorage {
   Future<String> get _localPath async {

@@ -1,4 +1,4 @@
-package hr.marincubela.remi_blok
+package hr.marincubela.kartaski_blok
 
 import io.flutter.embedding.android.FlutterActivity
 

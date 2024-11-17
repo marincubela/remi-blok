@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:remi_blok/remi.dart';
-import 'package:remi_blok/remi_storage.dart';
+import 'package:kartaski_blok/remi.dart';
+import 'package:kartaski_blok/remi_storage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -8,17 +8,18 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+  final String title = 'Kartaški blok';
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Remi Blok',
+      title: title,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.red).copyWith(surface: Colors.white),
         useMaterial3: true,
       ),
-      home: RemiPage(title: 'Remi blok - Dobro došli!', storage: RemiStorage()),
+      home: RemiPage(title: title, storage: RemiStorage()),
     );
   }
 }

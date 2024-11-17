@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:remi_blok/keyboard.dart';
-import 'package:remi_blok/remi_repository.dart';
-import 'package:remi_blok/remi_storage.dart';
+import 'package:kartaski_blok/remi_repository.dart';
+import 'package:kartaski_blok/remi_storage.dart';
 
 class RemiPage extends StatefulWidget {
   const RemiPage({super.key, required this.title, required this.storage});
@@ -15,13 +14,12 @@ class RemiPage extends StatefulWidget {
 
 class _RemiPageState extends State<RemiPage> {
   RemiRepository repository = RemiRepository([]);
-  final FocusNode _focus = FocusNode(); // 1) init _focus
   TextEditingController textController = TextEditingController();
   static const insideBorder = BorderSide(color: Colors.black, width: 0.1);
 
   void _resetGame() {
     setState(() {
-      repository = RemiRepository(['', '']);
+      repository = RemiRepository([]);
     });
 
     widget.storage.writeRemi(repository);
@@ -75,28 +73,19 @@ class _RemiPageState extends State<RemiPage> {
         repository = value;
       });
     });
-    _focus.addListener(_onFocusChange); // 2) add listener to our focus
   }
 
   @override
   void dispose() {
     super.dispose();
     textController.dispose();
-    _focus
-      ..removeListener(_onFocusChange)
-      ..dispose(); // 3) removeListener and dispose
-  }
-
-// 4)
-  void _onFocusChange() {
-    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Remi blok'),
+        title: Text(widget.title),
         backgroundColor: Theme.of(context).colorScheme.surface,
         actions: [
           IconButton(
@@ -112,8 +101,7 @@ class _RemiPageState extends State<RemiPage> {
             color: Theme.of(context).colorScheme.primary,
           ),
           IconButton(
-            icon: const Icon(Icons.playlist_remove 
-            ),
+            icon: const Icon(Icons.playlist_remove),
             onPressed: _resetGame,
             tooltip: 'Reset game',
             color: Theme.of(context).colorScheme.primary,
@@ -133,41 +121,32 @@ class _RemiPageState extends State<RemiPage> {
               border: const TableBorder(verticalInside: insideBorder),
               children: _buildTable(),
             ),
-            // 6) if hasFocus show keyboard, else show empty container
-            _focus.hasFocus
-                ? NumericKeypad(
-                    controller: textController,
-                    focusNode: _focus,
-                  )
-                : Container(),
           ],
         ),
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(color: Theme.of(context).colorScheme.primary,
-            width: 4)
-            )
-          ),
+            border: Border(
+                top: BorderSide(
+                    color: Theme.of(context).colorScheme.primary, width: 3))),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: OverflowBar(
             alignment: MainAxisAlignment.spaceEvenly,
             children: [
-              FloatingActionButton(                
+              FloatingActionButton(
                 backgroundColor: Theme.of(context).colorScheme.surface,
                 onPressed: _addRound,
                 tooltip: 'Add Round',
                 child: Icon(Icons.add,
-                   color: Theme.of(context).colorScheme.primary),
+                    color: Theme.of(context).colorScheme.primary),
               ),
               FloatingActionButton(
                 backgroundColor: Theme.of(context).colorScheme.surface,
                 onPressed: _removeRound,
                 tooltip: 'Remove Round',
                 child: Icon(Icons.remove,
-                   color: Theme.of(context).colorScheme.primary),
+                    color: Theme.of(context).colorScheme.primary),
               ),
             ],
           ),
@@ -186,8 +165,8 @@ class _RemiPageState extends State<RemiPage> {
 
     // Header row with player names
     tableRows.add(TableRow(
-      decoration:
-          BoxDecoration(border: Border(bottom: BorderSide(color: primary))),
+      decoration: BoxDecoration(
+          border: Border(bottom: BorderSide(color: primary, width: 2))),
       children: [
         ...repository.players.asMap().entries.map((entry) {
           var index = entry.key;
@@ -196,20 +175,17 @@ class _RemiPageState extends State<RemiPage> {
             child: TextFormField(
               initialValue: repository.players[index].toString(),
               textAlign: TextAlign.center,
-                decoration: InputDecoration(
+              textInputAction: TextInputAction.next,
+              decoration: InputDecoration(
                 border: InputBorder.none,
                 hintText: 'Igrač ${index + 1}',
               ),
-              // onChanged: (newValue) => _updatePlayerName(repository.players.indexOf(player), newValue),
-              onChanged : (newValue) {
-                setState(() {
-                    _updatePlayerName(repository.players.indexOf(player), newValue);
-
-                    widget.storage.writeRemi(repository);
-                  });
-              },
+              onChanged: (newValue) => _updatePlayerName(
+                  repository.players.indexOf(player), newValue),
               onFieldSubmitted: (newValue) => _updatePlayerName(
                   repository.players.indexOf(player), newValue),
+              onTapOutside: (event) =>
+                  FocusManager.instance.primaryFocus?.unfocus(),
             ),
           );
         }),
@@ -233,21 +209,26 @@ class _RemiPageState extends State<RemiPage> {
             return TableCell(
               child: TextFormField(
                 initialValue: repository.points[roundIndex][index] != 0
-                  ? repository.points[roundIndex][index].toString()
-                  : '',
+                    ? repository.points[roundIndex][index].toString()
+                    : '',
                 onChanged: (newValue) {
                   setState(() {
-                    repository.points[roundIndex][index] =
-                        int.tryParse(newValue) ?? score;
+                    int newScore = int.tryParse(newValue) ?? score;
+                    if (newValue.isEmpty) {
+                      newScore = 0;
+                    }
+                    repository.points[roundIndex][index] = newScore;
 
                     widget.storage.writeRemi(repository);
                   });
                 },
+                textInputAction: roundIndex + 1 == repository.points.length &&
+                        index + 1 == repository.points[roundIndex].length
+                    ? TextInputAction.done
+                    : TextInputAction.next,
                 textAlign: TextAlign.center,
-                // controller: textController,
-                // focusNode: _focus, // 5) pass our focusNode to our textfield
-                // keyboardType: TextInputType.none,
-                keyboardType: TextInputType.numberWithOptions(signed: true),
+                keyboardType:
+                    const TextInputType.numberWithOptions(signed: true),
                 onFieldSubmitted: (newValue) {
                   setState(() {
                     repository.points[roundIndex][index] =
@@ -256,6 +237,8 @@ class _RemiPageState extends State<RemiPage> {
                     widget.storage.writeRemi(repository);
                   });
                 },
+                onTapOutside: (event) =>
+                    FocusManager.instance.primaryFocus?.unfocus(),
                 decoration: const InputDecoration(border: InputBorder.none),
               ),
             );

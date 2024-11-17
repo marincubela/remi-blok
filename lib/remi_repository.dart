@@ -1,10 +1,10 @@
-
-
 class RemiRepository {
   RemiRepository(List<String> players) {
     for (String player in players) {
       addPlayer(player);
     }
+
+    //addRound();
   }
 
   List<String> players = [];
@@ -43,6 +43,9 @@ class RemiRepository {
   }
 
   void addRound() {
+    if (players.isEmpty) {
+      return;
+    }
     points.add(List.filled(players.length, 0, growable: true));
   }
 
@@ -71,10 +74,7 @@ class RemiRepository {
     }
   }
 
-  Map<String, dynamic> toJson() =>  { 
-    'players': players,
-    'points': points 
-  };
+  Map<String, dynamic> toJson() => {'players': players, 'points': points};
 
   static List<List<int>> parsePoints(dynamic json) {
     List<dynamic> firstList = json as List;
@@ -89,6 +89,6 @@ class RemiRepository {
   }
 
   RemiRepository.fromJson(Map<String, dynamic> json)
-    : players = List<String>.from(json['players'] as List),
-      points = parsePoints(json['points']);
+      : players = List<String>.from(json['players'] as List),
+        points = parsePoints(json['points']);
 }
