@@ -1,16 +1,41 @@
-# remi_blok
+# Kartaški blok – Remi scorekeeper
 
-A new Flutter project.
+Kartaški blok is a simple Flutter app for tracking scores in the Remi card game.
+It lets you manage players, record scores across rounds, and automatically
+calculate totals, with the full game state persisted locally on the device.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
+- **Dynamic players**: add and remove players (2–7 players supported).
+- **Rounds & scores**: add/remove rounds, enter positive or negative scores.
+- **Flexible score display**:
+  - Round score with cumulative badge.
+  - Cumulative score with round badge.
+  - Round-only view.
+  - Cumulative-only view.
+- **Automatic totals**: per-player totals shown in the bottom row.
+- **Persistence**: game state is saved to local storage and restored on app start.
 
-A few resources to get you started if this is your first Flutter project:
+## Architecture
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- `main.dart` – App entry point, sets up `MaterialApp` and injects storage.
+- `remi.dart` – `RemiPage` UI with the score table and controls.
+- `remi_repository.dart` – Domain model for players, rounds, and score logic.
+- `remi_storage.dart` – File-based JSON persistence using `path_provider`.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Running the app
+
+From the project root:
+
+```bash
+flutter pub get
+flutter run
+```
+
+## Testing
+
+Run unit and widget tests with:
+
+```bash
+flutter test
+```

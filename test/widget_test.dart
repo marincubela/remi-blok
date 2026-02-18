@@ -1,30 +1,48 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kartaski_blok/remi.dart';
+import 'package:kartaski_blok/remi_repository.dart';
+import 'package:kartaski_blok/remi_storage.dart';
 
-import 'package:kartaski_blok/main.dart';
+class FakeRemiStorage extends RemiStorage {
+  RemiRepository _repository = RemiRepository(['', '']);
+
+  @override
+  Future<RemiRepository> readGame(String gameId) async {
+    return _repository;
+  }
+
+  @override
+  Future<void> writeGame(String gameId, RemiRepository repository) async {
+    _repository = repository;
+    // Return a dummy file reference; the path is not used in tests.
+  }
+}
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('RemiPage toggles display mode icon', (WidgetTester tester) async {
+    final storage = FakeRemiStorage();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: RemiPage(
+          title: 'Test Remi',
+          storage: storage,
+          gameId: 'test-game',
+        ),
+      ),
+    );
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    // Let the initial readRemi future complete.
+    await tester.pumpAndSettle();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Starts in roundScore mode (looks_one icon).
+    expect(find.byIcon(Icons.looks_one), findsOneWidget);
+
+    // Tap to switch to cumulativeScore (trending_up icon).
+    await tester.tap(find.byIcon(Icons.looks_one));
+    await tester.pumpAndSettle();
+
+    expect(find.byIcon(Icons.trending_up), findsOneWidget);
   });
 }

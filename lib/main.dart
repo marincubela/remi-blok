@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kartaski_blok/remi.dart';
+import 'package:kartaski_blok/games_list.dart';
 import 'package:kartaski_blok/remi_storage.dart';
 
 void main() {
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.red).copyWith(surface: Colors.white),
         useMaterial3: true,
       ),
-      home: RemiPage(title: title, storage: RemiStorage()),
+      home: GamesListPage(storage: RemiStorage()),
     );
   }
 }
