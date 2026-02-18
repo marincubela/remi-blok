@@ -25,6 +25,17 @@ def keystoreProperties = new Properties()
 def keystorePropertiesFile = rootProject.file('key.properties')
 if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+} else {
+    keystoreProperties.put('keyAlias', System.getenv('ANDROID_KEY_ALIAS'))
+    keystoreProperties.put('keyPassword', System.getenv('ANDROID_KEY_PASSWORD'))
+    keystoreProperties.put('storePassword', System.getenv('ANDROID_KEYSTORE_PASSWORD'))
+    
+    def keystoreBase64 = System.getenv('ANDROID_KEYSTORE_BASE64')
+    if (keystoreBase64 != null) {
+        def keystoreFile = rootProject.file('upload-keystore.jks')
+        keystoreFile.bytes = keystoreBase64.decodeBase64()
+        keystoreProperties.put('storeFile', keystoreFile.absolutePath)
+    }
 }
 
 android {
